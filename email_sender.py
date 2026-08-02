@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+# config
 from config import (
     EMAIL_ADDRESS,
     EMAIL_PASSWORD,
