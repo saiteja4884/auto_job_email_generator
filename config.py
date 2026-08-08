@@ -1,70 +1,107 @@
 import os
 from dotenv import load_dotenv
 
-# Load .env locally (GitHub Actions provides these as environment variables)
+# Load environment variables from .env when running locally
 load_dotenv()
 
-# ==========================
-# Email Configuration
-# ==========================
+
+# ============================================================
+# EMAIL CONFIGURATION
+# ============================================================
+
+# Your Gmail address
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+
+# Gmail App Password
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-EMAIL_RECIPIENT = os.getenv("EMAIL_RECIPIENT", EMAIL_ADDRESS)
 
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+# Email address where the job report should be sent
+EMAIL_RECIPIENT = os.getenv("EMAIL_RECIPIENT")
 
-# ==========================
-# OpenAI (Optional)
-# ==========================
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# ==========================
-# Search APIs (Optional)
-# ==========================
-SERPAPI_KEY = os.getenv("SERPAPI_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
+# Gmail SMTP configuration
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
 
-# ==========================
-# Job Search Preferences
-# ==========================
+
+# ============================================================
+# JOB SEARCH PREFERENCES
+# ============================================================
+
+# Job titles you want to search for
 KEYWORDS = [
     "Software Engineer",
-    "Backend Engineer",
+    "Software Developer",
     "Python Developer",
+    "Backend Developer",
     "Data Engineer",
+    "Data Analyst",
     "Cloud Engineer",
 ]
 
+# Locations you are interested in
 LOCATIONS = [
     "Hyderabad",
     "Bangalore",
+    "Bengaluru",
+    "Chennai",
+    "Pune",
     "Remote",
 ]
 
-EXPERIENCE = "3+ years"
 
-# ==========================
-# Company Career Pages (Optional)
-# ==========================
-COMPANY_CAREER_URLS = [
-    "https://careers.google.com/jobs/results/",
-    "https://www.amazon.jobs/en/search",
-    "https://careers.microsoft.com/",
-]
+# ============================================================
+# JOB SEARCH SETTINGS
+# ============================================================
 
-# ==========================
-# Database
-# ==========================
+# Maximum number of jobs to include in the email
+MAX_RESULTS = 30
+
+# Only include jobs posted today
+ONLY_TODAY = True
+
+
+# ============================================================
+# DATABASE
+# ============================================================
+
 DATABASE_FILE = "jobs.db"
 
-# ==========================
-# Email Subject
-# ==========================
+
+# ============================================================
+# EMAIL
+# ============================================================
+
 EMAIL_SUBJECT = "Daily Job Openings"
 
-# ==========================
-# Maximum Jobs in Email
-# ==========================
-MAX_RESULTS = 25
+
+# ============================================================
+# VALIDATION
+# ============================================================
+
+def validate_config():
+    """
+    Check whether required email configuration exists.
+    """
+
+    missing = []
+
+    if not EMAIL_ADDRESS:
+        missing.append("EMAIL_ADDRESS")
+
+    if not EMAIL_PASSWORD:
+        missing.append("EMAIL_PASSWORD")
+
+    if not EMAIL_RECIPIENT:
+        missing.append("EMAIL_RECIPIENT")
+
+    if missing:
+        raise ValueError(
+            "Missing environment variables: "
+            + ", ".join(missing)
+        )
+
+
+if __name__ == "__main__":
+    validate_config()
+    print("Configuration loaded successfully.")

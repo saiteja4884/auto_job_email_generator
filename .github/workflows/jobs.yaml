@@ -1,27 +1,42 @@
-name: Daily Job Search
+name: Daily Job Search Agent
 
 on:
+  # Run every day at 8:00 AM IST
+  # 8:00 AM IST = 2:30 AM UTC
   schedule:
-    - cron: "0 2 * * *"   # Runs daily at 02:00 UTC
+    - cron: "30 2 * * *"
+
+  # Allows you to run it manually from GitHub
   workflow_dispatch:
 
 jobs:
-  search:
+  search-and-email:
+    name: Search Jobs and Send Email
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      # 1. Download your repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      # 3. Install Python packages
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run Job Search
+      # 4. Run the job search agent
+      - name: Search jobs and send email
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python search_jobs.py
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+        run: |
+          python search_jobs.py
